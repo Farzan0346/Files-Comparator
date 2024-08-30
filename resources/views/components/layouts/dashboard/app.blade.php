@@ -25,6 +25,7 @@
     <link data-navigate-once  href="{{ asset('backend/assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
     <link data-navigate-once  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-okaidia.min.css" />
     <link data-navigate-once  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/line-numbers/prism-line-numbers.min.css" />
+    <link data-navigate-once rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     @isset($head)
         {{ $head }}
@@ -62,11 +63,26 @@
     <script data-navigate-once src="{{ asset('backend/assets/libs/jsvectormap/maps/world.js') }}"></script>
     <script data-navigate-once src="{{ asset('backend/assets/js/pages/index.init.js') }}"></script>
     <script data-navigate-once src="{{ asset('backend/assets/js/app.js') }}"></script>
+    <script data-navigate-once src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!--end body-->
     @isset($foot)
         {{ $foot }}
     @endisset
     @livewireScripts
+
+    
+
+    <script>
+        window.addEventListener('livewire:init', () => {
+            Livewire.on('toast', (data) => {
+                console.log(data);
+                iziToast.show({
+                    position: "topCenter",
+                    message: data[0].message,
+                });
+            })
+        })
+    </script>
 </body>
 
 </html>

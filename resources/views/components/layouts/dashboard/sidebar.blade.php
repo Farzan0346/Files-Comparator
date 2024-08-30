@@ -3,7 +3,7 @@
     <div class="brand">
         <a href="index.html" class="logo">
             <span>
-                <h1><strong>LOGO</strong></h1>
+                <!-- <h1><strong>LOGO</strong></h1> -->
                 {{-- <img src="{{ asset('backend/assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm"> --}}
             </span>
         </a>

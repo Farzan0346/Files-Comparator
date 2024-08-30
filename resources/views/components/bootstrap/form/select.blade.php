@@ -1,4 +1,4 @@
-@props(['label', 'name', 'wire' => false, 'col' => false, 'mb' => ''])
+@props(['label', 'name', 'wire' => true, 'col' => false, 'mb' => ''])
 
 @php
     $hasErrors = $errors->any();
