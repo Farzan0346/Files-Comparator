@@ -1,0 +1,9 @@
+.diff-wrapper.diff td{
+    width: 50%;
+}
+.new{
+    background-color: #e1fbe1 !important;
+}
+.old{
+    background-color: #fbe1e1 !important;
+}
