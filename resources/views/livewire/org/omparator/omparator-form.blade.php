@@ -9,8 +9,8 @@
             <div class="row">
                 <div class="col-lg-2">
                     <x-bootstrap.form.select label="Select File Type" name="fileType">
-                        <option value="text/xml">XML</option>
-                        <option value="text/plain">TEXT</option>
+                        <option value="text/xml" >XML</option>
+                        <option value="text/plain" >TEXT</option>
                         <option value="application/json">JSON</option>
                     </x-bootstrap.form.select>
                 </div>

@@ -7,3 +7,6 @@
 .old{
     background-color: #fbe1e1 !important;
 }
+.diff-wrapper.diff tbody th {
+    white-space: nowrap;
+}

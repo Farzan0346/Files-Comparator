@@ -44,7 +44,7 @@ class OmparatorForm extends Component
             function normalizeXml($xml) {
                 $dom = new \DOMDocument();
                 $dom->preserveWhiteSpace = false; // Preserve the original formatting
-                $dom->formatOutput = false;
+                $dom->formatOutput = true;
                 $dom->loadXML($xml);
             
                 // Create XPath to traverse and normalize text nodes
@@ -110,80 +110,6 @@ class OmparatorForm extends Component
             // Convert XML to key-value array
             $keyValueArray_1 = xmlToKeyValueArray($newxml1);
             $keyValueArray_2 = xmlToKeyValueArray($newxml2);
-            // $xml1 = $keyValueArray_1;
-            // $xml2 = $keyValueArray_2;
-            // dd($keyValueArray_1,$keyValueArray_2);
-            // dd($keyValueArray_2);
-            // dd($xml1,$xml2);
-            // function parseXmlToObjectForm($reader) {
-            //     $node = new \stdClass(); // Root object to store all parsed elements
-            //     $node->children = []; // Initialize children as an array to store child elements and text
-            
-            //     // Read through the XML document
-            //     while ($reader->read()) {
-            //         if ($reader->nodeType == \XMLReader::ELEMENT) {
-            //             $name = $reader->name; // Current element name
-            //             $element = new \stdClass(); // New object to store the current element's data
-            //             $element->name = $name; // Store the element name
-            
-            //             // Process attributes
-            //             if ($reader->hasAttributes) {
-            //                 $element->attributes = [];
-            //                 while ($reader->moveToNextAttribute()) {
-            //                     $element->attributes[$reader->name] = $reader->value;
-            //                 }
-            //                 $reader->moveToElement(); // Move back to the element node
-            //             }
-            
-            //             // Process child elements or text
-            //             if (!$reader->isEmptyElement) {
-            //                 $depth = $reader->depth;
-            //                 $element->children = [];
-            
-            //                 // Read all child nodes and text content
-            //                 while ($reader->read()) {
-            //                     if ($reader->nodeType == \XMLReader::END_ELEMENT && $reader->depth == $depth) {
-            //                         break; // End of the current element
-            //                     }
-            
-            //                     if ($reader->nodeType == \XMLReader::ELEMENT) {
-            //                         $element->children[] = parseXmlToObjectForm($reader); // Recursive call for child elements
-            //                     } elseif ($reader->nodeType == \XMLReader::TEXT || $reader->nodeType == \XMLReader::CDATA) {
-            //                         $element->children[] = $reader->value; // Store text content
-            //                     }
-            //                 }
-            //             }
-            
-            //             // Add the element to the node object
-            //             $node->children[] = $element;
-            
-            //         } elseif ($reader->nodeType == \XMLReader::TEXT || $reader->nodeType == \XMLReader::CDATA) {
-            //             // Collect text nodes
-            //             return $reader->value; // Return text content for text or CDATA nodes
-            //         } elseif ($reader->nodeType == \XMLReader::END_ELEMENT) {
-            //             // End of the current element
-            //             return $node; // Return the fully constructed node object
-            //         }
-            //     }
-            
-            //     return $node; // Return the final parsed object after reading all nodes
-            // }
-            
-            // function parseXmlFile($filePath) {
-            //     $reader = new \XMLReader();
-            //     $reader->open($filePath); // Open the XML file
-            
-            //     // Parse the XML and convert it to an object
-            //     $xmlObject = parseXmlToObjectForm($reader);
-            //     $reader->close(); // Close the XML file
-            
-            //     return $xmlObject;
-            // }
-            
-            // Example usage with XML files
-            // $xml1parsed = parseXmlFile($this->file1->getRealPath());
-            // $xml2parsed = parseXmlFile($this->file2->getRealPath());
-           
             
             // Travel dates sorting
             
@@ -246,15 +172,42 @@ class OmparatorForm extends Component
                         //         $result[] = ['Existed in file 2 but not in file 1' => $dateRange2];
                         //     }
                         // }
+                        $dates1new = [];
                         foreach($found_index_1 as $index1xml => $val1){
                             $temp_index1 = $val1;
-                            $dates_1[$index1xml] = $dates_1[$temp_index1];
+                            $dates1new[$index1xml] = $dates_1[$temp_index1];
+                            // unset($dates_1[$temp_index1]);
                         }
+                        foreach ($dates_1 as $key => $value) {
+                            if (!in_array($key, array_values($found_index_1))) {
+                                $dates1new[] = $value; // Append remaining values to the end of $dates2new
+                            }
+                        }
+                        $dates2new = [];
                         foreach($found_index_2 as $index2Xml => $val2){
                             $temp_index = $val2;
-                            $dates_2[$index2Xml] = $dates_2[$temp_index];
+                            $dates2new[$index2Xml] = $dates_2[$temp_index];
+                            // unset($dates_2[$temp_index]);
     
                         }
+                        foreach ($dates_2 as $key => $value) {
+                            if (!in_array($key, array_values($found_index_2))) {
+                                $dates2new[] = $value; // Append remaining values to the end of $dates2new
+                            }
+                        }
+                        // foreach($found_index_2 as $index2Xml => $temp_index) {
+                        //     $value_to_move = $dates_2[$temp_index];
+                            
+                        //     // Remove the element from its original position
+                        //     unset($dates_2[$temp_index]);
+                        
+                        //     // Insert the element at the desired position
+                        //     array_splice($dates_2, $index2Xml, 0, $value_to_move);
+                        
+                        //     // Optionally, reset array keys if needed
+                        //     $dates_2 = array_values($dates_2);
+                        // }
+                        // dd(count($found_index_2 ), count($dates_2));
                     }
                 }
             }
@@ -262,23 +215,12 @@ class OmparatorForm extends Component
     
             $xml1Content = file_get_contents($this->file1->getRealPath());
             $xml2Content = file_get_contents($this->file2->getRealPath());
-            $xml1 = normalizeXml($xml1Content);
-            $xml2 = normalizeXml($xml2Content);
-    
-            // $xml1Object = simplexml_load_string($xml1Content, 'SimpleXMLElement', LIBXML_NOENT | LIBXML_NOCDATA);
-            // $xml2Object = simplexml_load_string($xml2Content, 'SimpleXMLElement', LIBXML_NOENT | LIBXML_NOCDATA);
-    
-            // // Check for errors
-            // if ($xml1Object === false) {
-            //     dd( "Failed loading XML\n");
-            //     // foreach(libxml_get_errors() as $error) {
-            //     //     echo "\t", $error->message;
-            //     // }
-            // } else {
-            //     // Successfully parsed, now you can work with the SimpleXML object
-            //     dd($xml1Object,$xml2Object);
-            // }
-    
+            // $xml1 = normalizeXml($xml1Content);
+            // $xml2 = normalizeXml($xml2Content);
+            $xml1 = file_get_contents($this->file1->getRealPath());
+            $xml2 = file_get_contents($this->file2->getRealPath());
+            
+            // dd(str_replace('<traveldates>' , 'helloooo', $xml1 ));
             
             // Converting array to xml
             function arrayToXml($data, &$xmlData, $traveldate = '') {
@@ -306,13 +248,6 @@ class OmparatorForm extends Component
                                     $price = true;
                                 }
                             }
-                            // if($key === 'price'){
-                            //     foreach($value as $subkey => $subvalue){
-                            //         $subnode = $xmlData->addChild($key);
-                            //         $subnode->addAttribute('text', htmlspecialchars($subvalue['@attributes']['text']));
-                            //         $subnode[0]= $subvalue['@attributes']['@value'];
-                            //     }
-                            // }
                             if ($key === 'price') {
                                 foreach ($value as $subvalue) {
                                     // Create a price node with the @value as its text content
@@ -330,15 +265,6 @@ class OmparatorForm extends Component
                                 $subnode = $xmlData->addChild($key);
                                 arrayToXml($value, $subnode, $traveldate);
                             }
-                            // if($key === )
-                            // foreach($value['@attributes'] as $subindex1 => $subvalue1){
-                            //     $subnode->addAttribute($subindex1, htmlspecialchars($subvalue1));
-                            // }
-            
-                            // Check if we need to add a 'text' attribute
-                            // if ($key === "price" && isset($value['@attributes']['text'])) {
-                            //     $subnode->addAttribute('text', htmlspecialchars($value['@attributes']['text']));
-                            // }
                                 
                         } else {
                             // Handle simple key-value pairs
@@ -346,6 +272,7 @@ class OmparatorForm extends Component
                         }
                     }
                 }
+                
             }
             
             function convertArrayToXml($array, $rootElement = 'root' , $encoded) {
@@ -381,9 +308,15 @@ class OmparatorForm extends Component
             $xml2Encoded = str_contains($xml2, 'encoding="UTF-8"');
             $xmlString1 = convertArrayToXml($keyValueArray_1, 'travelobject',$xml1Encoded); 
             $xmlString2 = convertArrayToXml($keyValueArray_2, 'travelobject',$xml2Encoded); 
-            $dateString1 = convertArrayToXml($dates_1, 'traveldates', $xml1Encoded);
-            $dateString2 = convertArrayToXml($dates_2, 'traveldates', $xml2Encoded);
-    
+            $dateString1 = convertArrayToXml($dates1new, 'traveldates', $xml1Encoded);
+            $dateString2 = convertArrayToXml($dates2new, 'traveldates', $xml2Encoded);
+            // arrayToXml($dates_1, $xml1converted);
+            // arrayToXml($dates_2, $xml2converted);
+            // dd($xml1converted);
+            // dd(gettype($dates_1));
+            // $dateString1 = implode(' ',$xml1converted);
+            // $dateString2 = implode(' ',$xml2converted);
+            // dd(gettype($dateString1));
             // Xml encoding
             function replaceXml($xmlString,$xmlEncoded){
                 if($xmlEncoded){
@@ -406,7 +339,7 @@ class OmparatorForm extends Component
                 $substring_to_add =  $dateString ;
         
                 // Create a regex pattern to match from the start word to the end word
-                $pattern = '/' . preg_quote($start_word, '/') . '.*?' . preg_quote($end_word, '/') . '/';
+                $pattern = '/(?<=' . preg_quote($start_word, '/') . ')(.*?)(?=' . preg_quote($end_word, '/') . ')/s';
         
                 // Use preg_replace to replace the matched substring with the new substring
                 $final_string = preg_replace($pattern, $substring_to_add, $xml);
@@ -415,19 +348,56 @@ class OmparatorForm extends Component
                 return $final_string;
                 
             }
-            $file1 = xmlMerge($noxml1 , $xml1);
-            $file2 = xmlMerge($noxml2 , $xml2);
+            // dd($noxml1,$noxml2);
+            $file1 = normalizeXml(xmlMerge($noxml1 , $xml1));
+            $file2 = normalizeXml(xmlMerge($noxml2 , $xml2));
+            
 
             // This is an XML file
         } elseif ($file1MimeType === 'application/json') {
             // This is a JSON file
+            // dd(file_get_contents($this->file1->getRealPath()));
+            $json1= file_get_contents($this->file1->getRealPath());
+            $json2= file_get_contents($this->file2->getRealPath());
+            $data1 = json_decode($json1, true);
+            $data2 = json_decode($json2, true);
+            // $file1 = 
+            // $file2 = file_get_contents($this->file2->getRealPath());
+            function sortJsonData($data)
+            {
+                if (is_array($data)) {
+                    ksort($data);
+                    foreach ($data as &$value) {
+                        if (is_array($value) || is_object($value)) {
+                            $value = sortJsonData($value);
+                        }
+                    }
+                } elseif (is_object($data)) {
+                    $data = (array) $data;
+                    ksort($data);
+                    foreach ($data as &$value) {
+                        if (is_array($value) || is_object($value)) {
+                            $value = sortJsonData($value);
+                        }
+                    }
+                    $data = (object) $data;
+                }
+                return $data;
+            }
+            $sortedData1 = sortJsonData($data1);
+            $sortedData2 = sortJsonData($data2);
+            $file1 = json_encode($sortedData1,JSON_PRETTY_PRINT);
+            $file2 = json_encode($sortedData2,JSON_PRETTY_PRINT);
+            // $file1 = '$sortedData1';
+            // $file2 = '$sortedData2';
+            // dd($file1, $sortedData1);
         }
         // Normalize xml
         
         // options for Diff class
         $diffOptions = [
             'context' => 1,
-            'ignoreCase' => true,
+            'ignoreCase' => false,
             'ignoreLineEnding' => true,
             'ignoreWhitespace' => true,
             'lengthLimit' => 10000,
